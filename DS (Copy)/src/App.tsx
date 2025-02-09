@@ -21,8 +21,10 @@ function App(){
   const [hand,setHand] = useState(game.PlayerList[0].hand.cards)
   const [, forceRender] = useState(false)
   const [players, setPlayers] = useState(game.PlayerList)
-  const [msg, setMsg] = useState("hello world")
+  const [msg, setMsg] = useState("")
   const [turn,setTurn] = useState(game.Turn)
+  const [oritentation,setOrientation] = useState(1)
+  const [bg,setBG] = useState({backgroundColor: "#999999"})
 
   function handleCardHover(d: any){
     setSCard(d)
@@ -45,6 +47,8 @@ function App(){
     if (valid == 1){
       game.RecentCard = d
       setPCard(d)
+      updBackground(d.color)
+      setMsg("")
 
       let a = hand
       a.splice(d.pos,1)
@@ -58,6 +62,7 @@ function App(){
         endGame()
       }
 
+      game.cardEffect(d.number,setMsg)
       game.nextTurn(updateTurn,updatePCard,setMsg,endGame)
     } else {
       setMsg("Carta invalida!")
@@ -80,10 +85,12 @@ function App(){
 
   function updateTurn(){
     setTurn(game.Turn)
+    setOrientation(game.orientation)
   }
 
   function updatePCard(){
     setPCard(game.RecentCard)
+    updBackground(game.RecentCard.color)
   }
 
   function endGame(){
@@ -94,8 +101,20 @@ function App(){
     window.location.href = `PaginaFinal.html?win=${encodeURIComponent(wString)}`
   }
 
-  return (<div style={{backgroundColor: "#e0b0e0"}}>
-  <h1>{msg}</h1>
+  function updBackground(color:any){
+    if (color == 0) {
+      setBG({backgroundColor: "#ccccff"})
+    } else if (color == 1) {
+      setBG({backgroundColor: "#ffcccc"})
+    } else if (color == 2) {
+      setBG({backgroundColor: "#ffffcc"})
+    } else {
+      setBG({backgroundColor: "#ccffcc"})
+    }
+  }
+
+  return (<div style={bg}>
+  <h1 style={{position: "fixed", bottom: "20px", left: "80px"}}>{msg}</h1>
   <Hand sendData={handleCardClick} sendHover={handleCardHover} cards = {hand}/>
   <div className="position-absolute top-50 start-50 translate-middle">
     <PlayedCard data = {pCard}/>
@@ -107,7 +126,7 @@ function App(){
     <SelectedCard data = {sCard}/>
   </div>
   <ListaJogadores P = {players} turno = {turn}/>
-  <JogadorAtt P = {players} turno = {turn}/>
+  <JogadorAtt P = {players} turno = {turn} ori = {oritentation}/>
   </div>)
 }
 

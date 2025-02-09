@@ -1,8 +1,8 @@
 function JogadorAtt(props:any) {
 
   const getJogadorAtual = () => props.P[props.turno % props.P.length];
-  const getJogadorAnterior = () => props.P[(props.turno - 1 + props.P.length) % props.P.length];
-  const getJogadorProximo = () => props.P[(props.turno + 1) % props.P.length];
+  const getJogadorAnterior = () => props.P[(props.turno -1*props.ori + props.P.length) % props.P.length];
+  const getJogadorProximo = () => props.P[(props.turno +props.ori + props.P.length) % props.P.length];
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>

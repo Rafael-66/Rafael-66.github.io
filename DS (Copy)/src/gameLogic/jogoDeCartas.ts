@@ -8,6 +8,8 @@ class CardGame {
     Turn: any
     RecentCard: any
     end: any
+    orientation: any
+    buy2Next: any
 
     constructor() {
         this.PlayerList = [];
@@ -16,6 +18,8 @@ class CardGame {
         this.Turn = 0;
         this.RecentCard = 0;
         this.end = 0;
+        this.orientation = 1;
+        this.buy2Next = 0;
     }
 
     startGame(PInput:any,SCards:any,P1Name:any) {
@@ -29,6 +33,8 @@ class CardGame {
         this.PlayerList = [];
         this.Winners = [];
         this.end = 0;
+        this.orientation = 1;
+        this.buy2Next = 0;
 
         this.PlayerList.push(new Player(P1Name,0));
 
@@ -82,12 +88,12 @@ class CardGame {
         return validC;
     }
 
-    enemyAiSimple(p:any,func:any,updMsg:any) {
+    enemyAiSimple(p:any,updPCard:any,updMsg:any) {
         let vc = this.validateCards(p);
         
         if (vc.length == 0) {
             p.buyCards(this.Deck);
-            updMsg(p.name + " comprou uma carta")
+            updMsg(p.name + " comprou uma carta!")
             return;
         }
 
@@ -95,16 +101,24 @@ class CardGame {
         let j = vc[i];
         let c = p.playCard(j);
         this.RecentCard = c;
-        func()
-        updMsg(p.name + " jogou uma carta")
+        updPCard()
+        updMsg("")
+        this.cardEffect(c.number,updMsg)
     }
 
     nextTurn(func1:any,func2:any,func3:any,func4:any) {
         if (this.end == 1){return}
 
-        this.Turn++
+        this.Turn = this.Turn +this.orientation
         let t = this.getPlayerTurn();
         let p = this.PlayerList[t];
+
+        if (this.buy2Next == 1){
+            p.buyCards(this.Deck)
+            p.buyCards(this.Deck)
+            this.buy2Next = 0
+            func3(p.name + " comprou 2 cartas!")
+        }
 
         console.log(this.Turn)
 
@@ -112,8 +126,8 @@ class CardGame {
 
         if (t != 0) {
             setTimeout(() => {
-                this.nextTurn(func1,func2,func3,func4)
                 this.enemyAiSimple(p,func2,func3);
+                this.nextTurn(func1,func2,func3,func4)
                 if (p.hand.countCards() == 0){
                     this.end = 1;
                     func4()
@@ -121,6 +135,18 @@ class CardGame {
             }, 1500);
         }
 
+    }
+
+    cardEffect(num:any, updMsg:any){
+        if (num == 10) {
+            this.Turn++
+            updMsg("Turno pulado!")
+        } else if (num == 11) {
+            this.orientation = this.orientation*-1
+            updMsg("Ordem invertida!")
+        } else if (num == 12) {
+            this.buy2Next = 1
+        }
     }
 
     getWinners() {

@@ -68,7 +68,7 @@ class Deck extends CardList {
     let n = 0
     this.cards = [];
     for (let color = 0; color <= 3; color++) {
-      for (let number = 0; number <= 9; number++) {
+      for (let number = 0; number <= 12; number++) {
         n = n+1
         this.addCard(new Card(color, number));
       }
